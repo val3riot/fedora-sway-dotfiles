@@ -1,0 +1,76 @@
+configuration {
+    modi: "drun,run";
+    show-icons: true;
+    display-drun: "Apps";
+    display-run: "Run";
+    font: "JetBrainsMono Nerd Font 11";
+    drun-display-format: "{name}";
+}
+
+* {
+    bg:        #16181dee;
+    bg-alt:    #20232aee;
+    fg:        #d8dee9;
+    muted:     #7f8794;
+    accent:    #7aa2d6;
+    selected:  #2a3140;
+    urgent:    #d16d7a;
+
+    background-color: transparent;
+    text-color: @fg;
+}
+window {
+    width: 42%;
+    location: center;
+    anchor: center;
+
+    border: 2px;
+    border-color: @accent;
+    border-radius: 12px;
+
+    background-color: @bg;
+    padding: 12px;
+}
+
+inputbar {
+    padding: 10px;
+    spacing: 8px;
+
+    background-color: @bg-alt;
+    border-radius: 9px;
+}
+
+prompt {
+    text-color: @accent;
+}
+
+entry {
+    text-color: @fg;
+    placeholder: "Cerca...";
+    placeholder-color: @muted;
+}
+
+listview {
+    lines: 8;
+    columns: 1;
+    spacing: 4px;
+    fixed-height: false;
+}
+
+element {
+    padding: 9px 10px;
+    border-radius: 8px;
+
+    background-color: transparent;
+    text-color: @fg;
+}
+
+element selected {
+    background-color: @selected;
+    text-color: #ffffff;
+}
+
+element-icon {
+    size: 24px;
+    margin: 0 8px 0 0;
+}

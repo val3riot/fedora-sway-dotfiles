@@ -1,0 +1,120 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 32,
+  "spacing": 3,
+
+  "modules-left": [
+    "sway/workspaces",
+    "sway/mode"
+  ],
+
+  "modules-center": [
+    "sway/window"
+  ],
+
+  "modules-right": [
+    "network",
+    "pulseaudio",
+    "backlight",
+    "battery",
+    "clock",
+    "tray",
+    "custom/power"
+  ],
+
+"sway/workspaces": {
+  "disable-scroll": true,
+  "all-outputs": true,
+  "persistent-workspaces": {
+    "1": [],
+    "2": [],
+    "3": [],
+    "4": [],
+    "5": []
+  },
+  "format": "{name}"
+},
+
+  "sway/mode": {
+    "format": "<span weight=\"bold\">{}</span>"
+  },
+
+  "sway/window": {
+    "format": "{}",
+    "max-length": 60
+  },
+"network": {
+  "format-wifi": "󰤨  {signalStrength}%",
+  "format-ethernet": "󰈀",
+  "format-disconnected": "󰤭",
+  "tooltip-format-wifi": "{essid}\n{ifname}\n{ipaddr}",
+  "tooltip-format-ethernet": "{ifname}\n{ipaddr}",
+  "tooltip-format-disconnected": "Rete disconnessa",
+  "on-click": "~/Progetti/personali/fedora-sway-dotfiles/scripts/network-popup.sh"
+},
+
+"pulseaudio": {
+  "format": "{icon}  {volume}%",
+  "format-muted": "󰝟",
+  "format-icons": {
+    "headphone": "󰋋",
+    "headset": "󰋎",
+    "speaker": "󰓃",
+    "default": ["󰕿", "󰖀", "󰕾"]
+  },
+  "scroll-step": 5,
+  "on-click": "~/Progetti/personali/fedora-sway-dotfiles/scripts/audio-popup.sh",
+  "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+},
+
+  "backlight": {
+   "format": "󰃠  {percent}%",
+
+   "format-icons": [
+    "󰃞",
+    "󰃟",
+    "󰃠"
+   ],
+   "on-scroll-up": "brightnessctl set +5%",
+   "on-scroll-down": "brightnessctl set 5%-",
+   "tooltip-format": "Luminosità: {percent}%"
+  },
+  "battery": {
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰚥 {capacity}%",
+    "format-icons": ["󰁺", "󰁻", "󰁽", "󰁿", "󰂁", "󰁹"]
+  },
+
+"clock": {
+  "format": "󰥔 {:%H:%M}",
+  "format-alt": "󰃭 {:%d/%m/%Y  %H:%M}",
+  "tooltip-format": "<tt>{calendar}</tt>"
+},
+  
+  "custom/power": {
+    "format": "󰐥",
+    "tooltip": false,
+    "on-click": "/home/valeriot/Progetti/personali/fedora-sway-dotfiles/scripts/power-menu.sh"
+  },
+
+"bluetooth": {
+  "format": "󰂯",
+  "format-disabled": "󰂲",
+  "format-off": "󰂲",
+  "format-connected": "󰂱 {num_connections}",
+  "tooltip-format": "Bluetooth",
+  "tooltip-format-connected": "{device_enumerate}",
+  "tooltip-format-enumerate-connected": "{device_alias}",
+  "on-click": "foot --app-id=foot-bluetooth bluetoothctl"
+},
+
+  "tray": {
+    "spacing": 10
+  }
+}
