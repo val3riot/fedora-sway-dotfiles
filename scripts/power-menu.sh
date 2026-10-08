@@ -6,7 +6,8 @@ choice="$(printf '%s\n' \
   "󰍃 Logout" \
   "󰜉 Reboot" \
   "󰐥 Shutdown" |
-  rofi -dmenu -i -p "Power" -theme ~/.config/rofi/config.rasi
+  rofi -dmenu -i -p "Power" -theme ~/.config/rofi/config.rasi \
+    -theme-str 'listview { lines: 5; }'
 )"
 
 case "$choice" in
