@@ -33,7 +33,22 @@
     "4": [],
     "5": []
   },
-  "format": "{name}"
+  // Bound each workspace label, including when many windows are open.
+  "format": "{name}  {windows:.24}",
+  "format-window-separator": " · ",
+  "window-rewrite-default": "{class}",
+  "window-rewrite": {
+    "class<(foot.*|kitty|alacritty|org\\.wezfurlong\\.wezterm)>": " Term",
+    "class<(firefox.*|Firefox.*|org\\.mozilla\\.firefox)>": " Firefox",
+    "class<(google-chrome.*|Google-chrome.*|chromium.*|Chromium.*|brave-browser.*|Brave-browser.*)>": " Web",
+    "class<(code.*|Code.*|codium.*|VSCodium.*|com\\.visualstudio\\.code)>": " Code",
+    "class<(org\\.gnome\\.Nautilus|thunar|Thunar|dolphin|org\\.kde\\.dolphin)>": " File",
+    "class<(spotify|Spotify|com\\.spotify\\.Client)>": " Spotify",
+    "class<(discord.*|Discord.*|com\\.discordapp\\.Discord)>": " Discord",
+    "class<(telegram.*|TelegramDesktop|org\\.telegram\\.desktop)>": " Telegram",
+    "class<(slack|Slack|com\\.slack\\.Slack)>": " Slack",
+    "class<(mpv|vlc|org\\.videolan\\.VLC)>": " Video"
+  }
 },
 
   "sway/mode": {

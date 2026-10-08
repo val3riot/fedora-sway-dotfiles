@@ -9,11 +9,11 @@ configuration {
 
 * {
     bg:        #16181dee;
-    bg-alt:    #20232aee;
+    bg-alt:    #2a2523ee;
     fg:        #d8dee9;
     muted:     #7f8794;
-    accent:    #7aa2d6;
-    selected:  #2a3140;
+    accent:    #d08770;
+    selected:  #2a2523;
     urgent:    #d16d7a;
 
     background-color: transparent;
@@ -68,7 +68,7 @@ element {
 
 element selected {
     background-color: @selected;
-    text-color: #ffffff;
+    text-color: @accent;
 }
 
 element-icon {

@@ -1,3 +1,9 @@
+@define-color foreground #d8dee9;
+@define-color muted #7f8794;
+@define-color accent #d08770;
+@define-color selected #2a2523;
+@define-color urgent #d16d7a;
+
 * {
     font-family: "JetBrainsMono Nerd Font", monospace;
     font-size: 12px;
@@ -7,7 +13,7 @@
 
 window#waybar {
     background: rgba(22, 24, 29, 0.45);
-    color: #d8dee9;
+    color: @foreground;
 }
 
 #network,
@@ -23,33 +29,53 @@ window#waybar {
 }
 
 #workspaces button {
-    color: #d8d8d8;
+    padding: 0 10px;
+    margin: 3px 2px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: @foreground;
+}
+
+#workspaces button.empty {
+    padding: 0 7px;
+    background: transparent;
+    color: @muted;
 }
 
 #workspaces button.focused {
-    color: #ffffff;
+    background: @selected;
+    border-color: @accent;
+    color: @foreground;
+}
+
+#workspaces button:hover {
+    background: @selected;
+    box-shadow: none;
+    text-shadow: none;
 }
 
 #workspaces button.urgent {
-    color: #ff7b9c;
+    border-color: @urgent;
+    color: @urgent;
 }
 
 #custom-power {
-    color: #d08770;
+    color: @accent;
     font-size: 14px;
     padding-left: 9px;
     padding-right: 10px;
 }
 
 #bluetooth {
-    color: #7aa2d6;
+    color: @accent;
 }
 
 #bluetooth.disabled,
 #bluetooth.off {
-    color: #7f8794;
+    color: @muted;
 }
 
 #bluetooth.connected {
-    color: #d8dee9;
+    color: @foreground;
 }
