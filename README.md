@@ -34,14 +34,32 @@ Review existing configuration and back it up first. On Fedora 44 or newer, insta
 
 ```sh
 sudo dnf install \
-  git stow sway swaybg swayidle swaylock waybar rofi foot dunst \
+  git stow curl unzip fontconfig sway swaybg swayidle swaylock waybar rofi foot dunst \
   NetworkManager NetworkManager-tui blueman bluez \
   pipewire pipewire-pulseaudio wireplumber wiremix \
   wl-clipboard cliphist grim slurp libnotify brightnessctl \
   zsh zsh-autosuggestions zsh-syntax-highlighting rsms-inter-fonts
 ```
 
-The Fedora version baseline reflects availability of [cliphist](https://packages.fedoraproject.org/pkgs/cliphist/cliphist/) in the official repositories. Current Fedora packages also provide [wiremix](https://packages.fedoraproject.org/pkgs/rust-wiremix/wiremix/) and [Rofi](https://packages.fedoraproject.org/pkgs/rofi/rofi/). Install **JetBrainsMono Nerd Font** separately before using these configurations; it is not included in the command above.
+The Fedora version baseline reflects availability of [cliphist](https://packages.fedoraproject.org/pkgs/cliphist/cliphist/) in the official repositories. Current Fedora packages also provide [wiremix](https://packages.fedoraproject.org/pkgs/rust-wiremix/wiremix/) and [Rofi](https://packages.fedoraproject.org/pkgs/rofi/rofi/).
+
+Install **JetBrainsMono Nerd Font** from the upstream [ryanoasis/nerd-fonts releases](https://github.com/ryanoasis/nerd-fonts/releases). The following installs the font for the current user and refreshes the font cache:
+
+```sh
+font_archive="$(mktemp --suffix=.zip)"
+curl --fail --location \
+  https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/JetBrainsMono.zip \
+  --output "$font_archive" &&
+mkdir -p "$HOME/.local/share/fonts/JetBrainsMono" &&
+unzip -n "$font_archive" -d "$HOME/.local/share/fonts/JetBrainsMono" &&
+fc-cache -f "$HOME/.local/share/fonts/JetBrainsMono"
+```
+
+The download is pinned to v3.5.1. The temporary archive remains available at `$font_archive`; `unzip -n` preserves any existing font files. To check the installed family:
+
+```sh
+fc-match 'JetBrainsMono Nerd Font'
+```
 
 Then clone and link the configuration packages:
 
