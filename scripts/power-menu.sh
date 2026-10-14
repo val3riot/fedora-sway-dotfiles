@@ -12,7 +12,7 @@ choice="$(printf '%s\n' \
 
 case "$choice" in
   "󰌾 Lock")
-    /home/valeriot/Progetti/personali/fedora-sway-dotfiles/scripts/lock.sh
+    swaylock -f
     ;;
   "󰤄 Suspend")
     systemctl suspend

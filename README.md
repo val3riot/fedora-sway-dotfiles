@@ -24,7 +24,7 @@ Personal user-level dotfiles and desktop helpers for a Fedora workstation runnin
 - Full-screen and selected-region screenshots, notifications and a wallpaper-backed lock screen.
 - Coordinated dark colors across the bar, launcher and window borders.
 
-Some configured actions depend on a missing lock helper; see [Portability and current limitations](#portability-and-current-limitations).
+Sway selects workspace 1 on session startup; reloading the configuration preserves the current workspace.
 
 ## Installation
 
@@ -72,7 +72,7 @@ stow --verbose --target="$HOME" dunst foot rofi sway swaylock waybar xdg zsh
 
 Resolve any reported conflicts before applying the links. `assets` and `scripts` stay in the checkout and are not Stow packages. Keep the checkout available while using its symlinks.
 
-Before using the desktop, adapt the personal script/wallpaper paths and review the missing lock helper described below. Linking files does not install dependencies, enable system services, select a login session or change the default shell.
+Before using the desktop, adapt the personal script/wallpaper paths described below. Linking files does not install dependencies, enable system services, select a login session or change the default shell.
 
 ## Repository structure
 
@@ -161,7 +161,7 @@ Helpers live in [scripts/](scripts/). Network/audio popups use the separate Foot
 | `bluetooth-manager.sh` | Focuses an existing `blueman-manager` window or launches it; Sway requests a centered 850 × 600 window. No configured binding/click invokes this helper. |
 | `bluetooth-menu.sh` | Standalone Rofi menu: enable/disable Bluetooth, connect/disconnect paired devices, or scan for five seconds and pair, trust and connect a selected device. No configured binding/click invokes it. |
 | `clipboard-menu.sh` | Super + V lists `cliphist` entries in Rofi, decodes the selection and copies it with `wl-copy`. |
-| `power-menu.sh` | Super + P / Waybar power button offers lock, suspend, logout, reboot and shutdown. Lock calls the absent `scripts/lock.sh`; the other entries call `systemctl` or `swaymsg exit`. |
+| `power-menu.sh` | Super + P / Waybar power button offers lock, suspend, logout, reboot and shutdown. Lock runs `swaylock -f`; the other entries call `systemctl` or `swaymsg exit`. |
 | `screenshot-full.sh` | Print creates `~/Immagini/Screenshots/`, captures with `grim` and calls `notify-send` with the saved path. |
 
 Sway startup launches Dunst, `blueman-applet`, and separate text/image `wl-paste` watchers feeding `cliphist`. Waybar is restarted on configuration reload through `exec_always`.
@@ -185,8 +185,8 @@ Sway uses Inter 10, 3-pixel default borders, 10-pixel inner gaps and 8-pixel out
 ## Portability and current limitations
 
 - Sway keybindings, Waybar actions, wallpaper configuration, swaylock and Zsh contain personal absolute paths or assume `~/Progetti/personali/fedora-sway-dotfiles`. Cloning elsewhere requires adapting these references; Stow does not rewrite them.
-- `scripts/lock.sh` is absent. Both the power menu's lock entry and swayidle's 30-minute/before-sleep lock commands reference it. The direct Super + Ctrl + L binding runs `swaylock` independently.
-- The configured idle schedule also powers off outputs after 60 minutes (restoring them on activity) and requests suspend after 90 minutes. The missing helper prevents relying on the configured automatic lock actions.
+- swayidle runs `swaylock -f` after 30 minutes and before sleep. With `swayidle -w`, the lock command returns after the screen is locked. Outputs power off after 60 minutes (restoring on activity), and suspend is requested after 90 minutes.
+- swaylock configures the in-session lock screen. The login greeter is configured separately; Sway's Italian keyboard setting applies inside the Sway session, not to the greeter. No login-manager configuration is included here.
 - The keyboard layout is Italian. Touchpad tap, natural scrolling and disable-while-typing are enabled.
 - Region screenshots require `~/Immagini/` to exist; the full-screen helper creates its own destination there. These paths differ from XDG's configured `~/Pictures` directory.
 - Battery/backlight controls and fixed popup sizes should be reviewed for the target hardware/display. No specific output name is pinned: wallpaper and idle output commands target all outputs.
