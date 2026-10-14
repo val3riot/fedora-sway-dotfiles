@@ -30,7 +30,20 @@ Some configured actions depend on a missing lock helper; see [Portability and cu
 
 The repository does not record an established deployment command. Its eight configuration directories are compatible with GNU Stow: each contains paths relative to `$HOME`. The following is an optional way to link them, not a bundled installer.
 
-Review existing configuration and back it up first. Install the required tools separately, then clone and link the packages:
+Review existing configuration and back it up first. On Fedora 44 or newer, install the packages before applying Stow:
+
+```sh
+sudo dnf install \
+  git stow sway swaybg swayidle swaylock waybar rofi foot dunst \
+  NetworkManager NetworkManager-tui blueman bluez \
+  pipewire pipewire-pulseaudio wireplumber wiremix \
+  wl-clipboard cliphist grim slurp libnotify brightnessctl \
+  zsh zsh-autosuggestions zsh-syntax-highlighting rsms-inter-fonts
+```
+
+The Fedora version baseline reflects availability of [cliphist](https://packages.fedoraproject.org/pkgs/cliphist/cliphist/) in the official repositories. Current Fedora packages also provide [wiremix](https://packages.fedoraproject.org/pkgs/rust-wiremix/wiremix/) and [Rofi](https://packages.fedoraproject.org/pkgs/rofi/rofi/). Install **JetBrainsMono Nerd Font** separately before using these configurations; it is not included in the command above.
+
+Then clone and link the configuration packages:
 
 ```sh
 git clone https://github.com/val3riot/fedora-sway-dotfiles.git
@@ -39,7 +52,7 @@ stow --simulate --verbose --target="$HOME" dunst foot rofi sway swaylock waybar 
 stow --verbose --target="$HOME" dunst foot rofi sway swaylock waybar xdg zsh
 ```
 
-GNU Stow must be installed for these commands. Resolve any reported conflicts before applying the links. `assets` and `scripts` stay in the checkout and are not Stow packages. Keep the checkout available while using its symlinks.
+Resolve any reported conflicts before applying the links. `assets` and `scripts` stay in the checkout and are not Stow packages. Keep the checkout available while using its symlinks.
 
 Before using the desktop, adapt the personal script/wallpaper paths and review the missing lock helper described below. Linking files does not install dependencies, enable system services, select a login session or change the default shell.
 
@@ -61,7 +74,7 @@ fedora-sway-dotfiles/
 
 ## Dependencies
 
-These are commands/components referenced by the configuration, rather than a verified Fedora package-install list.
+The installation command above covers the Fedora packages; the following lists their roles and the additional font requirement.
 
 ### Core
 
