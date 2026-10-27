@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Launch Kate's user-local language servers without changing project runtimes."""
+"""Launch Kate's local language servers without changing project runtimes."""
 
 import hashlib
+import json
 import os
 from pathlib import Path
 import shutil
@@ -9,23 +10,32 @@ import sys
 
 
 def main():
-    tools = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share")) / "kate-tools"
+    os.environ["PATH"] = str(Path(sys.executable).parent) + os.pathsep + os.environ.get("PATH", "")
+    data = (Path.home() / "Library/Application Support" if sys.platform == "darwin"
+            else Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share")))
+    tools = data / "kate-tools"
+    runtime_file = tools / "runtime.json"
+    runtime = json.loads(runtime_file.read_text()) if runtime_file.is_file() else {}
     modules = tools / "node_modules"
     kind = sys.argv[1]
     if kind == "java":
         # Isolate JDT LS state per project, including projects with equal names.
         project = str(Path.cwd().resolve())
         key = hashlib.sha256(project.encode()).hexdigest()[:16]
-        cache = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
+        cache = (Path.home() / "Library/Caches" if sys.platform == "darwin"
+                 else Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")))
         workspace = cache / "kate/jdtls" / key
         workspace.mkdir(parents=True, exist_ok=True)
-        launcher = tools / "jdtls/bin/jdtls"
-        if not launcher.is_file():
+        launcher = runtime.get("jdtls") or str(tools / "jdtls/bin/jdtls")
+        if not Path(launcher).is_file():
             raise RuntimeError("JDT LS is missing; see the repository's Kate instructions")
+        # Homebrew wrappers may need their sibling executables when Kate is
+        # launched from Finder rather than a terminal.
+        os.environ["PATH"] = str(Path(launcher).parent) + os.pathsep + os.environ.get("PATH", "")
         os.execv(str(launcher), [str(launcher), "-data", str(workspace)])
 
     # Fedora's system Node is independent of the shell's older NVM default.
-    node = "/usr/bin/node" if Path("/usr/bin/node").is_file() else shutil.which("node")
+    node = runtime.get("node") or ("/usr/bin/node" if Path("/usr/bin/node").is_file() else shutil.which("node"))
     if not node:
         raise RuntimeError("Node.js is required for frontend language servers")
     binaries = modules / ".bin"

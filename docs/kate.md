@@ -1,63 +1,61 @@
-# Kate trial
+# Kate: import on Linux and macOS
 
-Experimental configuration on `experiment/kate`, managed with Stow. It enables Projects, document tree, search, document switching and LSP. Normal graphical editing shortcuts remain unchanged. Formatting on save and inlay hints are off.
+Import theme, toolbar, shortcuts, panels and Java/Angular support **without Stow**. The importer copies files, generates paths for the destination computer and backs up existing settings. The checkout can be moved or removed afterwards.
 
-## Install and apply
+## macOS
 
-```sh
-sudo dnf install kate kate-plugins nodejs npm python3 java-25-openjdk-devel
-stow --simulate --no-folding --verbose --target="$HOME" kate
-stow --no-folding --verbose --target="$HOME" kate
-```
-
-Resolve existing file conflicts first. `--no-folding` keeps sessions and other generated files outside the checkout. Kate may save additional GUI preferences to `katerc`; review those changes before committing.
-
-Install frontend servers in a dedicated user directory, using a recent Node (22.22.3+, a supported 24.x, or 26.x). On Fedora the launcher uses `/usr/bin/node`, independently of NVM's shell default:
+Install prerequisites with [Homebrew](https://formulae.brew.sh/cask/kate):
 
 ```sh
-env PATH=/usr/bin:/bin npm install --prefix "$HOME/.local/share/kate-tools" \
-  --no-audit --no-fund --save-exact \
-  typescript@6.0.3 typescript-language-server@6.0.2 \
-  @angular/language-server@22.2.3 vscode-langservers-extracted@4.10.0
+brew install --cask kate
+brew install python node jdtls
 ```
 
-Install the tested Java language server (JDT LS 1.63.0):
+Copy this checkout (including the current experimental changes) to the Mac, close Kate, then run from its root:
 
 ```sh
-curl --fail --location \
-  https://download.eclipse.org/jdtls/milestones/1.63.0/jdt-language-server-1.63.0-202610191322.tar.gz \
-  --output /tmp/kate-jdtls-1.63.0.tar.gz
-printf '%s  %s\n' \
-  b1f2abe0b3cccb462cf64fb4a5587c7d09df60cf8be7748b152cbd89d018bdc4 \
-  /tmp/kate-jdtls-1.63.0.tar.gz | sha256sum --check &&
-mkdir -p "$HOME/.local/share/kate-tools/jdtls" &&
-tar -xzf /tmp/kate-jdtls-1.63.0.tar.gz -C "$HOME/.local/share/kate-tools/jdtls"
+python3 scripts/import-kate.py --dry-run
+python3 scripts/import-kate.py --install-tools
 ```
 
-Dependencies live outside the repository. With a custom `XDG_DATA_HOME`, use that path instead of `~/.local/share` in installation commands. JDT LS needs a compatible JDK (the trial was checked with system Java 25); project compilation may use a different JDK.
+Homebrew's [jdtls](https://formulae.brew.sh/formula/jdtls) supplies the Java language server and its JDK dependency. Launch Kate from Finder or with `kate /path/to/project`; the generated commands use absolute executable paths so they do not depend on the GUI application's shell PATH.
 
-## Try it
-
-Run `kate /path/to/project`, then open a source file. On first use Kate may ask permission to launch the configured language-server command. Projects detects Git repositories automatically; use the Projects panel for the file tree and Git status. Shortcuts are in the main [README](../README.md#kate-experimental).
-
-| Files | Support |
-| --- | --- |
-| Java | JDT LS completion, navigation, diagnostics and server-provided code actions; separate cached workspace per project |
-| JavaScript / TypeScript / JSX / TSX | TypeScript server for normal code and React |
-| HTML in Angular workspaces | Angular server when an ancestor contains `angular.json` |
-| Other HTML / CSS / SCSS / JSON | HTML, CSS and JSON servers |
-
-Install the project's dependencies as usual. Angular prefers language-service/TypeScript packages from the project, with the installed 22.2.3/6.0.3 pair as fallback. Test compatibility with your Angular version. TypeScript files use the TypeScript server: Angular-specific assistance inside inline templates is not configured. Debug adapters, test runners, Spring-specific tooling and automatic formatting are outside this initial trial.
-
-The setup was checked on Fedora. Kate also runs on macOS, but dependency installation and configuration paths need a separate check there.
-
-## Remove the trial
-
-Close Kate, then unlink before switching branches:
+## Fedora
 
 ```sh
-stow --delete --target="$HOME" kate
-git switch master
+sudo dnf install kate kate-plugins python3 nodejs npm java-25-openjdk-devel
+python3 scripts/import-kate.py --install-tools
 ```
 
-Kate and language servers stay installed; unlinking only removes the managed configuration links.
+`--install-tools` installs the pinned frontend servers and downloads checksum-verified JDT LS 1.63.0 only if no local/Homebrew JDT LS is available. Node must be 22.22.3+, a supported 24.15+ release, or 26+. Angular 22.2.3 and TypeScript 6.0.3 are the tested fallback pair; match the language-service versions to older projects as needed.
+
+If the servers are already installed, use `python3 scripts/import-kate.py`. Existing configuration and Stow links are backed up and replaced with independent copies. Re-run the importer after changing the source configuration. Kate's LSP `settings.json` in the checkout is a template: use the importer for Kate, rather than Stow alone.
+
+## What travels
+
+- Solarized Dark editor and matching Kate Solarized window palette.
+- Open Folder toolbar button and `Ctrl+Shift+O`; the conflicting spell-check shortcut is cleared.
+- Project/Git left, LSP symbols right, diagnostics/search/terminal below (closed initially).
+- Java, TypeScript/React, Angular inline/external templates, HTML, CSS and JSON support.
+
+Runtime state, recent files, machine-specific fonts/window sizes and remembered server permissions are excluded. On first use, Kate may ask to authorize the generated LSP commands. Availability of the integrated terminal depends on the Kate build and its Konsole component. Debuggers, test runners and Spring-specific tooling are not included.
+
+## Paths and layout
+
+| Files | Linux | macOS |
+| --- | --- | --- |
+| Preferences / LSP settings | `~/.config/katerc`, `~/.config/kate/` | `~/Library/Preferences/katerc`, `~/Library/Preferences/kate/` |
+| Palettes, toolbar XML, tools | `~/.local/share/` | `~/Library/Application Support/` |
+| Launcher | `~/.local/bin/kate-language-server` | `~/.local/bin/kate-language-server` |
+
+Paths follow [Qt's platform conventions](https://doc.qt.io/qt-6/qstandardpaths.html); Linux XDG overrides are respected. The importer creates/applies the anonymous-session layout without copying your project history. For a named session, close Kate and run `python3 scripts/kate-layout.py /path/to/session.katesession`.
+
+To transfer only the Kate setup rather than the repository:
+
+```sh
+tar -czf /tmp/kate-setup.tar.gz kate scripts/import-kate.py scripts/kate-layout.py docs/kate.md
+```
+
+Extract it on the Mac, enter the extracted directory and use the same import command. No Git or Stow is required there.
+
+Backups are under `~/.local/state/dotfiles-backups/` on Linux and `~/Library/Preferences/State/dotfiles-backups/` on macOS. The actual GUI was checked on Fedora; macOS destinations and generated paths have automated tests, but have not been run on a Mac. Toolbar customizations target Kate 26.08.1 / KatePart 6.31 and should be reviewed after major UI updates.

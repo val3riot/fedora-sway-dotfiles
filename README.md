@@ -1,6 +1,6 @@
 # Fedora Sway Dotfiles
 
-Personal configuration for a Fedora workstation with Sway, Zsh, tmux and Neovim. Each configuration directory is a GNU Stow package, with paths relative to `$HOME`.
+Personal configuration for a Fedora workstation with Sway, Zsh, tmux and Neovim. Most configuration directories are GNU Stow packages. Kate also has an importer for Linux and macOS that works without Stow.
 
 ## Installation
 
@@ -38,6 +38,16 @@ stow --verbose --target="$HOME" dunst foot nvim rofi sway swaylock tmux waybar x
 ```
 
 You can link individual packages with `stow --target="$HOME" tmux nvim`. Keep the checkout available: the configuration files are symlinks into it. Stow does not install dependencies or configure system services, the login session or the default shell.
+
+### Kate on Linux or macOS (without Stow)
+
+Copy this checkout to the new computer, install Kate and its dependencies, then close Kate and run:
+
+```sh
+python3 scripts/import-kate.py --install-tools
+```
+
+This copies the theme, toolbar, shortcuts, panels and Java/Angular configuration to the platform's directories. It generates local paths and backs up existing settings. Full commands for macOS and Fedora: [Kate setup](docs/kate.md).
 
 ### Neovim file picker
 
@@ -144,16 +154,18 @@ In the file picker: type to filter, arrows to select, Enter to open, Escape to c
 
 ### Kate (experimental)
 
-Setup and dependencies: [Kate](docs/kate.md). Open a project with `kate /path/to/project`.
+Setup and dependencies: [Kate](docs/kate.md). Open a project with `kate /path/to/project` or the Open Folder toolbar button. Panels: Project/Git left, LSP symbols right, search/diagnostics/terminal below.
 
 | Shortcut | Action |
 | --- | --- |
 | `Ctrl+c` / `Ctrl+x` / `Ctrl+v` | Copy / cut / paste |
 | `Ctrl+s` / `Ctrl+z` | Save / undo |
+| `Ctrl+Shift+o` | Open folder as a project |
 | `Ctrl+Alt+o` | Quick open files |
 | `Ctrl+f` / `Ctrl+Shift+f` | Search in file / across files |
 | `Ctrl+click` on a symbol | Go to definition with LSP |
 | `F2` | Rename symbol with LSP |
+| `F4` | Show / hide terminal |
 
 ## Machine-specific notes
 

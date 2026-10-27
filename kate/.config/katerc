@@ -1,21 +1,55 @@
+[General]
+Days Meta Infos=30
+PinnedDocuments=
+Save Meta Infos=true
+Show Full Path in Title=false
+Show Menu Bar=true
+Show Status Bar=true
+Show Tab Bar=true
+Show Url Nav Bar=true
+Show welcome view for new window=false
+
+[KTextEditor Renderer]
+Animate Bracket Matching=false
+Auto Color Theme Selection=false
+Color Theme=Solarized Dark
+Line Height Multiplier=1
+Show Indentation Lines=false
+Show Whole Bracket Expression=false
+Word Wrap Marker=false
+
 [Kate Plugins]
-katefiletreeplugin=true
+katefiletreeplugin=false
+katekonsoleplugin=true
 kateprojectplugin=true
 katesearchplugin=true
 lspclientplugin=true
 tabswitcherplugin=true
 
+[UiSettings]
+ColorScheme=KateSolarized
+
 [lspclient]
 AutoHover=true
 AutoImport=true
 CompletionDocumentation=true
+CompletionParens=true
 Diagnostics=true
 FormatOnSave=false
+HighlightGoto=true
+HighlightSymbol=true
+IncrementalSync=false
 InlayHints=false
+Messages=true
+ReferencesDeclaration=true
 SemanticHighlighting=true
 ShowCompletions=true
 SignatureHelp=true
+SymbolDetails=false
+SymbolExpand=true
+SymbolSort=false
 SymbolTree=true
+TypeFormatting=false
 
 [project]
 autorepository=git
