@@ -49,6 +49,10 @@ python3 scripts/import-kate.py --install-tools
 
 This copies the theme, toolbar, shortcuts, panels and Java/Angular configuration to the platform's directories. It generates local paths and backs up existing settings. Full commands for macOS and Fedora: [Kate setup](docs/kate.md).
 
+### VS Code on Linux or macOS
+
+Import [java-frontend.code-profile](vscode/java-frontend.code-profile) from **Profiles → Import Profile**. It includes portable settings and official Java, Angular, container and Codex extensions. No Stow is needed. [Setup and maintenance](docs/vscode.md).
+
 ### Neovim file picker
 
 Neovim uses the bundled Netrw tree and one plugin, [mini.pick](https://github.com/nvim-mini/mini.pick). Install it once; the destination must not already exist:
@@ -76,6 +80,7 @@ The plugin is pinned to a tested revision; no automatic downloads or updates. Fi
 | `tmux/` | Terminal sessions, panes, mouse and Wayland clipboard |
 | `nvim/` | Minimal editor with file search, tree and clipboard shortcuts |
 | `kate/` | Experimental GUI editor setup for Java and frontend; see [Kate setup](docs/kate.md) |
+| `vscode/` | Portable VS Code profile and readable source settings |
 | `scripts/` / `assets/` | Desktop helpers and wallpaper; kept in the checkout |
 
 Waybar opens network/audio popups and the power menu. Bluetooth uses Blueman; additional Bluetooth helpers are in `scripts/`. The desktop uses dark colors, Inter and JetBrainsMono Nerd Font.

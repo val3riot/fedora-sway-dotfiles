@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "vscjava.vscode-java-pack",
+    "Angular.ng-template",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-azuretools.vscode-containers",
+    "docker.docker",
+    "ms-vscode-remote.remote-containers",
+    "openai.chatgpt"
+  ]
+}
