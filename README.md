@@ -65,6 +65,7 @@ The plugin is pinned to a tested revision; no automatic downloads or updates. Fi
 | `zsh/` / `xdg/` | Shell preferences and user-directory mappings |
 | `tmux/` | Terminal sessions, panes, mouse and Wayland clipboard |
 | `nvim/` | Minimal editor with file search, tree and clipboard shortcuts |
+| `kate/` | Experimental GUI editor setup for Java and frontend; see [Kate setup](docs/kate.md) |
 | `scripts/` / `assets/` | Desktop helpers and wallpaper; kept in the checkout |
 
 Waybar opens network/audio popups and the power menu. Bluetooth uses Blueman; additional Bluetooth helpers are in `scripts/`. The desktop uses dark colors, Inter and JetBrainsMono Nerd Font.
@@ -140,6 +141,19 @@ Source: [init.lua](nvim/.config/nvim/init.lua). Start from the project root with
 The tree opens on the left, including with `nvim .`. Resize panels by dragging the divider with the mouse or using the shortcuts above after Escape. `Space e` hides the tree.
 
 In the file picker: type to filter, arrows to select, Enter to open, Escape to cancel. Editing shortcuts apply to text buffers. Clipboard access requires `wl-clipboard` and an active Wayland session.
+
+### Kate (experimental)
+
+Setup and dependencies: [Kate](docs/kate.md). Open a project with `kate /path/to/project`.
+
+| Shortcut | Action |
+| --- | --- |
+| `Ctrl+c` / `Ctrl+x` / `Ctrl+v` | Copy / cut / paste |
+| `Ctrl+s` / `Ctrl+z` | Save / undo |
+| `Ctrl+Alt+o` | Quick open files |
+| `Ctrl+f` / `Ctrl+Shift+f` | Search in file / across files |
+| `Ctrl+click` on a symbol | Go to definition with LSP |
+| `F2` | Rename symbol with LSP |
 
 ## Machine-specific notes
 

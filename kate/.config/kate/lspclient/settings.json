@@ -1,0 +1,25 @@
+{
+  "servers": {
+    "java": {
+      "command": ["python3", "%{ENV:HOME}/.local/bin/kate-language-server", "java"],
+      "rootIndicationFileNames": ["pom.xml", "build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts", ".git"],
+      "useWorkspace": false
+    },
+    "javascript": {
+      "command": ["python3", "%{ENV:HOME}/.local/bin/kate-language-server", "typescript"],
+      "rootIndicationFileNames": ["package.json", "tsconfig.json", ".git"]
+    },
+    "html": {
+      "command": ["python3", "%{ENV:HOME}/.local/bin/kate-language-server", "html"],
+      "rootIndicationFileNames": ["angular.json", "package.json", ".git"]
+    },
+    "css": {
+      "command": ["python3", "%{ENV:HOME}/.local/bin/kate-language-server", "css"],
+      "rootIndicationFileNames": ["package.json", ".git"]
+    },
+    "json": {
+      "command": ["python3", "%{ENV:HOME}/.local/bin/kate-language-server", "json"],
+      "rootIndicationFileNames": ["package.json", ".git"]
+    }
+  }
+}

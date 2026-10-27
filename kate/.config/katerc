@@ -1,0 +1,21 @@
+[Kate Plugins]
+katefiletreeplugin=true
+kateprojectplugin=true
+katesearchplugin=true
+lspclientplugin=true
+tabswitcherplugin=true
+
+[lspclient]
+AutoHover=true
+AutoImport=true
+CompletionDocumentation=true
+Diagnostics=true
+FormatOnSave=false
+InlayHints=false
+SemanticHighlighting=true
+ShowCompletions=true
+SignatureHelp=true
+SymbolTree=true
+
+[project]
+autorepository=git

@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Launch Kate's user-local language servers without changing project runtimes."""
+
+import hashlib
+import os
+from pathlib import Path
+import shutil
+import sys
+
+
+def main():
+    tools = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share")) / "kate-tools"
+    modules = tools / "node_modules"
+    kind = sys.argv[1]
+    if kind == "java":
+        # Isolate JDT LS state per project, including projects with equal names.
+        project = str(Path.cwd().resolve())
+        key = hashlib.sha256(project.encode()).hexdigest()[:16]
+        cache = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
+        workspace = cache / "kate/jdtls" / key
+        workspace.mkdir(parents=True, exist_ok=True)
+        launcher = tools / "jdtls/bin/jdtls"
+        if not launcher.is_file():
+            raise RuntimeError("JDT LS is missing; see the repository's Kate instructions")
+        os.execv(str(launcher), [str(launcher), "-data", str(workspace)])
+
+    # Fedora's system Node is independent of the shell's older NVM default.
+    node = "/usr/bin/node" if Path("/usr/bin/node").is_file() else shutil.which("node")
+    if not node:
+        raise RuntimeError("Node.js is required for frontend language servers")
+    binaries = modules / ".bin"
+    names = {
+        "typescript": "typescript-language-server",
+        "html": "vscode-html-language-server",
+        "css": "vscode-css-language-server",
+        "json": "vscode-json-language-server",
+    }
+    args = [str(binaries / names[kind]), "--stdio"]
+    if kind == "html":
+        # Kate starts the server in the detected project root. Use Angular only
+        # for Angular workspaces; ordinary HTML keeps its own language server.
+        angular = next((p for p in [Path.cwd(), *Path.cwd().parents]
+                        if (p / "angular.json").is_file()), None)
+        if angular:
+            # Prefer matching project packages; fall back to the installed pair.
+            probes = str(angular / "node_modules") + "," + str(modules)
+            args = [str(binaries / "ngserver"), "--stdio",
+                    "--tsProbeLocations", probes, "--ngProbeLocations", probes]
+    if not Path(args[0]).is_file():
+        raise RuntimeError("Frontend language servers are missing; see the repository's Kate instructions")
+    os.execv(node, [node, *args])
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (OSError, RuntimeError, KeyError, IndexError) as error:
+        print(f"Kate language server: {error}", file=sys.stderr)
+        sys.exit(1)
