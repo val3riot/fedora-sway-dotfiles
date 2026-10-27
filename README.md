@@ -1,36 +1,10 @@
 # Fedora Sway Dotfiles
 
-Personal user-level dotfiles and desktop helpers for a Fedora workstation running Sway. Configuration packages mirror home-directory paths; there is no installer or Fedora provisioning script.
-
-## Stack
-
-| Component | Role |
-| --- | --- |
-| Sway | Wayland compositor, tiling workflow and window rules |
-| Waybar | Top status bar and entry points for desktop controls |
-| Rofi | Application launcher and selection menus |
-| Dunst | Desktop notifications |
-| Foot | Terminal and floating terminal utilities |
-| swaylock / swayidle | Lock-screen configuration and idle actions |
-| Blueman | Bluetooth tray applet and graphical device manager |
-| Zsh | Interactive shell configuration |
-
-## Features
-
-- Five workspace shortcuts, directional focus/movement, fullscreen and floating toggles.
-- Rofi application launcher, clipboard history selection and power menu.
-- Floating NetworkManager and audio interfaces using Foot, `nmtui` and `wiremix`.
-- Bluetooth helpers for Blueman and a separate Rofi/`bluetoothctl` menu.
-- Full-screen and selected-region screenshots, notifications and a wallpaper-backed lock screen.
-- Coordinated dark colors across the bar, launcher and window borders.
-
-Sway selects workspace 1 on session startup; reloading the configuration preserves the current workspace.
+Personal configuration for a Fedora workstation with Sway, Zsh, tmux and Neovim. Each configuration directory is a GNU Stow package, with paths relative to `$HOME`.
 
 ## Installation
 
-The repository does not record an established deployment command. Its eight configuration directories are compatible with GNU Stow: each contains paths relative to `$HOME`. The following is an optional way to link them, not a bundled installer.
-
-Review existing configuration and back it up first. On Fedora 44 or newer, install the packages before applying Stow:
+On Fedora 44 or newer:
 
 ```sh
 sudo dnf install \
@@ -38,12 +12,11 @@ sudo dnf install \
   NetworkManager NetworkManager-tui blueman bluez \
   pipewire pipewire-pulseaudio wireplumber wiremix \
   wl-clipboard cliphist grim slurp libnotify brightnessctl \
-  zsh zsh-autosuggestions zsh-syntax-highlighting rsms-inter-fonts
+  zsh zsh-autosuggestions zsh-syntax-highlighting rsms-inter-fonts \
+  tmux neovim ripgrep
 ```
 
-The Fedora version baseline reflects availability of [cliphist](https://packages.fedoraproject.org/pkgs/cliphist/cliphist/) in the official repositories. Current Fedora packages also provide [wiremix](https://packages.fedoraproject.org/pkgs/rust-wiremix/wiremix/) and [Rofi](https://packages.fedoraproject.org/pkgs/rofi/rofi/).
-
-Install **JetBrainsMono Nerd Font** from the upstream [ryanoasis/nerd-fonts releases](https://github.com/ryanoasis/nerd-fonts/releases). The following installs the font for the current user and refreshes the font cache:
+Install [JetBrainsMono Nerd Font](https://github.com/ryanoasis/nerd-fonts/releases) for terminal text and icons:
 
 ```sh
 font_archive="$(mktemp --suffix=.zip)"
@@ -55,69 +28,54 @@ unzip -n "$font_archive" -d "$HOME/.local/share/fonts/JetBrainsMono" &&
 fc-cache -f "$HOME/.local/share/fonts/JetBrainsMono"
 ```
 
-The download is pinned to v3.5.1. The temporary archive remains available at `$font_archive`; `unzip -n` preserves any existing font files. To check the installed family:
-
-```sh
-fc-match 'JetBrainsMono Nerd Font'
-```
-
-Then clone and link the configuration packages:
+Clone the repository and preview the links before applying them. Back up existing configurations and resolve any Stow conflicts first.
 
 ```sh
 git clone https://github.com/val3riot/fedora-sway-dotfiles.git
 cd fedora-sway-dotfiles
-stow --simulate --verbose --target="$HOME" dunst foot rofi sway swaylock waybar xdg zsh
-stow --verbose --target="$HOME" dunst foot rofi sway swaylock waybar xdg zsh
+stow --simulate --verbose --target="$HOME" dunst foot nvim rofi sway swaylock tmux waybar xdg zsh
+stow --verbose --target="$HOME" dunst foot nvim rofi sway swaylock tmux waybar xdg zsh
 ```
 
-Resolve any reported conflicts before applying the links. `assets` and `scripts` stay in the checkout and are not Stow packages. Keep the checkout available while using its symlinks.
+You can link individual packages with `stow --target="$HOME" tmux nvim`. Keep the checkout available: the configuration files are symlinks into it. Stow does not install dependencies or configure system services, the login session or the default shell.
 
-Before using the desktop, adapt the personal script/wallpaper paths described below. Linking files does not install dependencies, enable system services, select a login session or change the default shell.
+### Neovim file picker
 
-## Repository structure
+Neovim uses the bundled Netrw tree and one plugin, [mini.pick](https://github.com/nvim-mini/mini.pick). Install it once; the destination must not already exist:
 
-```text
-fedora-sway-dotfiles/
-├── assets/     # Wallpaper assets
-├── dunst/      # Notification configuration
-├── foot/       # Regular terminal and popup profiles
-├── rofi/       # Launcher and shared menu theme
-├── scripts/    # Desktop utility helpers
-├── sway/       # Compositor config and modular conf.d files
-├── swaylock/   # Lock-screen appearance
-├── waybar/     # Bar modules and CSS
-├── xdg/        # User-directory mappings
-└── zsh/        # Interactive shell configuration
+```sh
+mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/pack/dotfiles/start"
+git clone https://github.com/nvim-mini/mini.pick.git \
+  "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/pack/dotfiles/start/mini.pick"
+git -C "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/pack/dotfiles/start/mini.pick" \
+  checkout --detach 8c1f75f8ddd8c9f75d07ed2ab5718d2c3cb65a66
 ```
 
-## Dependencies
+The plugin is pinned to a tested revision; no automatic downloads or updates. File search uses `ripgrep`, includes hidden files and respects ignore rules. No language servers or completion plugins are configured.
 
-The installation command above covers the Fedora packages; the following lists their roles and the additional font requirement.
+## Configuration
 
-### Core
+| Directory | Purpose |
+| --- | --- |
+| `sway/` | Compositor, workspaces, keyboard, startup and idle actions |
+| `waybar/` | Status bar: network, audio, brightness, battery and power menu |
+| `rofi/` | Application launcher and shared menu theme |
+| `dunst/` / `swaylock/` | Notifications and lock screen |
+| `foot/` | Terminal and popup profiles |
+| `zsh/` / `xdg/` | Shell preferences and user-directory mappings |
+| `tmux/` | Terminal sessions, panes, mouse and Wayland clipboard |
+| `nvim/` | Minimal editor with file search, tree and clipboard shortcuts |
+| `scripts/` / `assets/` | Desktop helpers and wallpaper; kept in the checkout |
 
-- `sway` / `swaymsg`, `waybar`, a Wayland-capable `rofi`, `foot`, `dunst`.
-- `swaybg` for Sway's configured output background; `swaylock` and `swayidle` for lock/idle configuration.
-- Inter and JetBrainsMono Nerd Font; the latter supplies the configured icon glyphs.
+Waybar opens network/audio popups and the power menu. Bluetooth uses Blueman; additional Bluetooth helpers are in `scripts/`. The desktop uses dark colors, Inter and JetBrainsMono Nerd Font.
 
-### Desktop utilities
+## Shortcuts
 
-- NetworkManager with `nmtui` for the network popup.
-- `wiremix` for the audio popup; `wpctl` (WirePlumber) for mute control. Waybar uses its `pulseaudio` module, requiring a compatible audio service such as PipeWire's PulseAudio interface.
-- `blueman-applet`, `blueman-manager` and BlueZ's `bluetoothctl` for Bluetooth controls.
-- `wl-paste`, `wl-copy` and `cliphist` for clipboard history.
-- `grim`, `slurp` and `notify-send` for screenshots and notifications.
-- `brightnessctl` for backlight adjustment; battery/backlight modules depend on available hardware.
-- `systemctl` for suspend, reboot and shutdown; POSIX `sh` and standard utilities including `awk`, `grep`, `stty`, `sleep`, `pkill` and `date`.
+Keep these tables in sync with the configuration when adding or changing shortcuts.
 
-### Shell
+### Sway
 
-- `zsh`, with plugins sourced from `/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh` and `/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh`.
-- GNU Stow only if using the optional linking instructions above.
-
-## Keybindings
-
-Source: [30-keybinds.conf](sway/.config/sway/conf.d/30-keybinds.conf). `Super` is `Mod4`.
+Source: [30-keybinds.conf](sway/.config/sway/conf.d/30-keybinds.conf). `Super` is the Windows/Super key.
 
 | Shortcut | Action |
 | --- | --- |
@@ -138,59 +96,54 @@ Source: [30-keybinds.conf](sway/.config/sway/conf.d/30-keybinds.conf). `Super` i
 | Super + P | Open power menu |
 | Power button (`XF86PowerOff`) | Suspend through `systemctl` |
 
-## Waybar
+### tmux
 
-The 32-pixel top bar places workspaces and Sway mode on the left, the focused window title in the center, and network, audio, backlight, battery, clock, tray and a custom power button on the right. Workspaces 1–5 remain visible, with bounded application labels and icon/name rewrites for common applications; these mappings do not install those applications.
+Source: [tmux.conf](tmux/.config/tmux/tmux.conf). Press `Ctrl+b`, release it, then press the key below.
 
-- Network click opens the network popup; tooltips show connection details.
-- Audio click opens `wiremix`; right-click toggles the default sink's mute state with `wpctl`. Volume scrolling uses a step of 5.
-- Backlight scrolling changes brightness by 5% through `brightnessctl`.
-- The clock has an alternate date/time format and a calendar tooltip.
-- The custom power button opens the Rofi power menu. The tray hosts applets such as Blueman.
-
-A Bluetooth module is defined but omitted from the active module lists. Its configured click command would open `bluetoothctl` in Foot; it does not invoke the Bluetooth helper scripts.
-
-## System popups and menus
-
-Helpers live in [scripts/](scripts/). Network/audio popups use the separate Foot popup profile and Sway app-ID rules to float and center their windows.
-
-| Script | Actual behavior and entry point |
+| Key after prefix | Action |
 | --- | --- |
-| `network-popup.sh` | Waybar network click opens `nmtui` in `foot-network`, after waiting for terminal dimensions to settle. Sway sizes it to 70% of the output width and height. |
-| `audio-popup.sh` | Waybar audio click opens `wiremix` in `foot-audio`; Sway requests a centered 1180 × 700 window. |
-| `bluetooth-manager.sh` | Focuses an existing `blueman-manager` window or launches it; Sway requests a centered 850 × 600 window. No configured binding/click invokes this helper. |
-| `bluetooth-menu.sh` | Standalone Rofi menu: enable/disable Bluetooth, connect/disconnect paired devices, or scan for five seconds and pair, trust and connect a selected device. No configured binding/click invokes it. |
-| `clipboard-menu.sh` | Super + V lists `cliphist` entries in Rofi, decodes the selection and copies it with `wl-copy`. |
-| `power-menu.sh` | Super + P / Waybar power button offers lock, suspend, logout, reboot and shutdown. Lock runs `swaylock -f`; the other entries call `systemctl` or `swaymsg exit`. |
-| `screenshot-full.sh` | Print creates `~/Immagini/Screenshots/`, captures with `grim` and calls `notify-send` with the saved path. |
+| `c` | New window in the current directory |
+| `1`–`9` | Select a window |
+| `\|` / `-` | Split side by side / top and bottom |
+| `h` / `j` / `k` / `l` | Focus left / down / up / right pane |
+| `z` | Toggle pane zoom |
+| `[` | Enter scrollback/copy mode |
+| `d` | Detach and keep the session running |
+| `r` | Reload configuration |
 
-Sway startup launches Dunst, `blueman-applet`, and separate text/image `wl-paste` watchers feeding `cliphist`. Waybar is restarted on configuration reload through `exec_always`.
+In copy mode: move with arrows or `h/j/k/l`, `v` starts selection, `y` copies to the Wayland clipboard, `q` exits. Mouse selection also copies; hold Shift to select through Foot instead.
 
-## Appearance
+Start with `tmux new -s dev`; return with `tmux attach -t dev`. Sessions survive closing the terminal, but not a reboot.
 
-Sway, Waybar and Rofi use dark backgrounds around `#16181d`, pale text `#d8dee9`, a warm `#d08770` accent and rose `#d16d7a` urgency colors. Dunst and swaylock also use blue `#7aa2d6` accents. Foot uses a separate dark `#11111b` background with pastel terminal colors.
+### Neovim
 
-Sway uses Inter 10, 3-pixel default borders, 10-pixel inner gaps and 8-pixel outer gaps. Other components use JetBrainsMono Nerd Font. Waybar has a 45%-opaque background and rounded workspace buttons; Rofi is centered at 42% width with a translucent background, 2-pixel accent border and rounded corners. Foot background opacity is 0.88 normally and 0.92 for popups. Dunst places rounded notifications at the top right.
+Source: [init.lua](nvim/.config/nvim/init.lua). Start from the project root with `nvim .`. Press Escape before normal-mode shortcuts such as `Space f`.
 
-## Wallpapers
+| Shortcut | Action |
+| --- | --- |
+| `i` / Escape | Write / return to normal mode |
+| Arrow keys | Move, including while writing |
+| `v`, then movement | Select text; Escape cancels |
+| `Ctrl+c` / `Ctrl+x` with a selection | Copy / cut |
+| `Ctrl+v` | Paste, also while writing or over a selection |
+| `Ctrl+s` | Save |
+| `Ctrl+z` | Undo in normal or insert mode |
+| Space, then `f` | Find files |
+| Space, then `e` | Toggle the file tree |
+| Enter in the tree | Expand directory / open file |
+| `Ctrl+w`, then `w` | Switch between tree and editor |
+| Space, then Right / Left | Widen / narrow the current panel |
+| Space, then Up / Down | Increase / decrease the current panel's height |
+| `/text`, then Enter | Search in file; `n` / `N` for next / previous |
+| `:q`, then Enter | Close window; warns about unsaved changes |
 
-[assets/wallpapers/main.jpg](assets/wallpapers/main.jpg) is the only tracked image. Sway applies it to all outputs with `fill`; swaylock uses it with the same scaling. Both references are absolute personal paths and need review on another machine. No desktop screenshot is included in the repository.
+The tree opens on the left, including with `nvim .`. Resize panels by dragging the divider with the mouse or using the shortcuts above after Escape. `Space e` hides the tree.
 
-## Zsh and XDG
+In the file picker: type to filter, arrows to select, Enter to open, Escape to cancel. Editing shortcuts apply to text buffers. Clipboard access requires `wl-clipboard` and an active Wayland session.
 
-[.zshrc](zsh/.zshrc) configures 50,000-entry shared history, duplicate/leading-space history filtering, automatic directory changes and case-insensitive completion with menu selection. It sources autosuggestions and syntax highlighting from system paths and prepends a hard-coded personal `.local/bin` directory to `PATH`. No custom prompt is configured.
+## Machine-specific notes
 
-[user-dirs.dirs](xdg/.config/user-dirs.dirs) maps Desktop, Downloads, Templates, Public, Documents, Music, Pictures and Videos to English directory names under `$HOME`.
-
-## Portability and current limitations
-
-- Sway keybindings, Waybar actions, wallpaper configuration, swaylock and Zsh contain personal absolute paths or assume `~/Progetti/personali/fedora-sway-dotfiles`. Cloning elsewhere requires adapting these references; Stow does not rewrite them.
-- swayidle runs `swaylock -f` after 30 minutes and before sleep. With `swayidle -w`, the lock command returns after the screen is locked. Outputs power off after 60 minutes (restoring on activity), and suspend is requested after 90 minutes.
-- swaylock configures the in-session lock screen. The login greeter is configured separately; Sway's Italian keyboard setting applies inside the Sway session, not to the greeter. No login-manager configuration is included here.
-- The keyboard layout is Italian. Touchpad tap, natural scrolling and disable-while-typing are enabled.
-- Region screenshots require `~/Immagini/` to exist; the full-screen helper creates its own destination there. These paths differ from XDG's configured `~/Pictures` directory.
-- Battery/backlight controls and fixed popup sizes should be reviewed for the target hardware/display. No specific output name is pinned: wallpaper and idle output commands target all outputs.
-
-## What this repository is not
-
-This repository contains user-level dotfiles and desktop helpers. It is not a full Fedora provisioning framework or a complete workstation installer.
+- Adapt personal absolute paths in Sway, Waybar, swaylock and Zsh if cloning outside `~/Progetti/personali/fedora-sway-dotfiles`. Wallpaper: [main.jpg](assets/wallpapers/main.jpg).
+- Sway uses an Italian keyboard layout. Lock after 30 minutes, screen off after 60, suspend after 90. Login-screen configuration is separate.
+- Screenshots use `~/Immagini/` and `~/Immagini/Screenshots/`, while XDG maps pictures to `~/Pictures`. Create `~/Immagini/` before using region capture.
+- Review battery/backlight modules and popup sizes for your hardware.
