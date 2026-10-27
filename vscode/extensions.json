@@ -1,6 +1,11 @@
 {
   "recommendations": [
-    "vscjava.vscode-java-pack",
+    "redhat.java",
+    "vscjava.vscode-java-debug",
+    "vscjava.vscode-java-test",
+    "vscjava.vscode-java-dependency",
+    "vscjava.vscode-maven",
+    "vscjava.vscode-gradle",
     "Angular.ng-template",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",

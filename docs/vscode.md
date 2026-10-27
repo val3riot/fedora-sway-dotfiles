@@ -6,7 +6,7 @@ The profile includes Solarized Dark, built-in Seti icons, hover documentation, p
 
 Official extensions included:
 
-- Microsoft Java Extension Pack: Java language support, debugger, tests, project management, Maven and Gradle.
+- The six official Java components: Red Hat language support and Microsoft debugger, tests, project management, Maven and Gradle. They are listed explicitly because native profile import does not expand extension packs.
 - Angular Language Service, Microsoft ESLint and official Prettier.
 - Microsoft Container Tools and Dev Containers, plus Docker's Docker DX.
 - OpenAI Codex (`openai.chatgpt`).
